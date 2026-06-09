@@ -106,6 +106,17 @@ function countHabitsCompleted(form: FormData, customHabits: CustomHabit[]): { do
 export default function DailyLogClient({ today, userId, initialLog, breakfastOptions, customHabits }: Props) {
   const [form, setForm] = useState<FormData>(() => formDataFromLog(initialLog, customHabits))
   const [locked, setLocked] = useState(initialLog?.confirmed ?? false)
+
+  async function unlockDay() {
+    setSaving(true)
+    await supabase
+      .from('daily_logs')
+      .update({ confirmed: false, confirmed_at: null })
+      .eq('user_id', userId)
+      .eq('log_date', today)
+    setLocked(false)
+    setSaving(false)
+  }
   const [showConfirm, setShowConfirm] = useState(false)
   const [saving, setSaving] = useState(false)
   const [newBreakfast, setNewBreakfast] = useState('')
@@ -205,7 +216,7 @@ export default function DailyLogClient({ today, userId, initialLog, breakfastOpt
         </div>
 
         <p className="font-pixel text-xs text-center text-black">
-          ¿Confirmás el día? Una vez confirmado no se puede editar.
+          ¿Confirmás el día? Podés editarlo después si cometés un error.
         </p>
 
         <div className="flex gap-3">
@@ -258,6 +269,14 @@ export default function DailyLogClient({ today, userId, initialLog, breakfastOpt
           {renderSummaryItem('Sin alcohol', form.drank_alcohol === false)}
           {customHabits.map(h => renderSummaryItem(h.name, !!form.custom_habits[h.id]))}
         </div>
+
+        <button
+          onClick={unlockDay}
+          disabled={saving}
+          className="btn-pixel w-full disabled:opacity-50"
+        >
+          {saving ? '...' : '✎ EDITAR DÍA'}
+        </button>
       </div>
     )
   }

@@ -6,7 +6,8 @@ export default async function LogPage() {
   const { data: { session } } = await supabase.auth.getSession()
   const userId = session!.user.id
 
-  const today = new Date().toISOString().split('T')[0]
+  // Use Argentina timezone (UTC-3) to avoid date flipping after midnight UTC
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Argentina/Buenos_Aires' })
 
   const [logResult, breakfastResult, customResult] = await Promise.all([
     supabase
