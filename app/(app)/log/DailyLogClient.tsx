@@ -11,6 +11,7 @@ interface Props {
   initialLog: DailyLog | null
   breakfastOptions: BreakfastOption[]
   customHabits: CustomHabit[]
+  backHref?: string
 }
 
 type FormData = {
@@ -103,7 +104,7 @@ function countHabitsCompleted(form: FormData, customHabits: CustomHabit[]): { do
   return { done, total }
 }
 
-export default function DailyLogClient({ today, userId, initialLog, breakfastOptions, customHabits }: Props) {
+export default function DailyLogClient({ today, userId, initialLog, breakfastOptions, customHabits, backHref }: Props) {
   const [form, setForm] = useState<FormData>(() => formDataFromLog(initialLog, customHabits))
   const [locked, setLocked] = useState(initialLog?.confirmed ?? false)
 
@@ -180,7 +181,11 @@ export default function DailyLogClient({ today, userId, initialLog, breakfastOpt
     setLocked(true)
     setShowConfirm(false)
     setSaving(false)
-    router.refresh()
+    if (backHref) {
+      router.push(backHref)
+    } else {
+      router.refresh()
+    }
   }
 
   async function addBreakfastOption() {
