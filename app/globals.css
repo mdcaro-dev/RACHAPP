@@ -1,27 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --rach-yellow: #F9D34C;
+  --rach-blue: #0A80FE;
+  --rach-red: #E12715;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #F9D34C;
+  color: #000000;
+  font-family: system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+@layer components {
+  .btn-pixel {
+    @apply font-pixel text-xs px-4 py-3 border-2 border-black bg-white text-black shadow-pixel
+           transition-all duration-75 cursor-pointer select-none;
+  }
+  .btn-pixel:active {
+    @apply shadow-none translate-x-1 translate-y-1;
+  }
+  .btn-pixel-blue {
+    @apply btn-pixel bg-rach-blue text-white shadow-pixel;
+  }
+  .btn-pixel-red {
+    @apply btn-pixel bg-rach-red text-white shadow-pixel;
+  }
+  .btn-pixel-yellow {
+    @apply btn-pixel bg-rach-yellow text-black shadow-pixel;
+  }
+  .card-pixel {
+    @apply border-2 border-black bg-white shadow-pixel p-4;
+  }
+  .input-pixel {
+    @apply border-2 border-black bg-white px-3 py-2 font-pixel text-xs w-full
+           focus:outline-none focus:border-rach-blue shadow-pixel-sm;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+/* Pixel art scanline overlay effect */
+.pixel-scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
 }
