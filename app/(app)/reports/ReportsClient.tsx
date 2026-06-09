@@ -87,6 +87,58 @@ function isHealthyDay(log: DailyLog, customHabits: CustomHabit[], threshold: num
   return Math.round((met / total) * 100) >= threshold
 }
 
+// Pixel-art pie chart using SVG
+function PieChart({ pct, size = 80, color }: { pct: number; size?: number; color: string }) {
+  const r = size / 2 - 4
+  const cx = size / 2
+  const cy = size / 2
+  const circumference = 2 * Math.PI * r
+
+  if (pct === 0) {
+    return (
+      <svg width={size} height={size} style={{ imageRendering: 'pixelated' }}>
+        <circle cx={cx} cy={cy} r={r} fill="white" stroke="black" strokeWidth={2} />
+      </svg>
+    )
+  }
+
+  if (pct === 100) {
+    return (
+      <svg width={size} height={size} style={{ imageRendering: 'pixelated' }}>
+        <circle cx={cx} cy={cy} r={r} fill={color} stroke="black" strokeWidth={2} />
+      </svg>
+    )
+  }
+
+  const angle = (pct / 100) * 360
+  const rad = (angle - 90) * (Math.PI / 180)
+  const x = cx + r * Math.cos(rad)
+  const y = cy + r * Math.sin(rad)
+  const largeArc = angle > 180 ? 1 : 0
+
+  const d = [
+    `M ${cx} ${cy}`,
+    `L ${cx} ${cy - r}`,
+    `A ${r} ${r} 0 ${largeArc} 1 ${x} ${y}`,
+    'Z',
+  ].join(' ')
+
+  return (
+    <svg width={size} height={size} style={{ imageRendering: 'pixelated' }}>
+      {/* Background (miss) */}
+      <circle cx={cx} cy={cy} r={r} fill="white" stroke="black" strokeWidth={2} />
+      {/* Filled slice (hit) */}
+      <path d={d} fill={color} />
+      {/* Border on top */}
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke="black" strokeWidth={2} />
+      {/* Center dot */}
+      <circle cx={cx} cy={cy} r={2} fill="black" />
+      {/* Dividing line from center to top */}
+      <line x1={cx} y1={cy} x2={cx} y2={cy - r} stroke="black" strokeWidth={1.5} />
+    </svg>
+  )
+}
+
 export default function ReportsClient({ logs, customHabits, healthyDayThreshold, goals }: Props) {
   const [range, setRange] = useState<Range>('30')
   const [customStart, setCustomStart] = useState('')
@@ -180,21 +232,21 @@ export default function ReportsClient({ logs, customHabits, healthyDayThreshold,
       ) : (
         <>
           {/* Overall healthy days */}
-          <div className="card-pixel space-y-3">
-            <p className="font-pixel text-xs text-black/60">DÍAS SALUDABLES</p>
-            <div className="flex items-end gap-3">
-              <span className="font-pixel text-3xl text-black">{healthyDaysPct}%</span>
-              <DeltaBadge current={healthyDaysPct} prev={prevHealthyDaysPct} positive={true} />
+          <div className="card-pixel flex items-center gap-4">
+            <PieChart pct={healthyDaysPct} size={80} color="#0A80FE" />
+            <div className="space-y-1">
+              <p className="font-pixel text-xs text-black/60">DÍAS SALUDABLES</p>
+              <div className="flex items-baseline gap-2">
+                <span className="font-pixel text-2xl text-black">{healthyDaysPct}%</span>
+                <DeltaBadge current={healthyDaysPct} prev={prevHealthyDaysPct} positive={true} />
+              </div>
+              <p className="font-pixel text-xs text-black/50">{healthyDaysCount} de {currentLogs.length} días</p>
             </div>
-            <div className="w-full bg-black/10 border-2 border-black h-3">
-              <div className="h-full bg-rach-blue" style={{ width: `${healthyDaysPct}%` }} />
-            </div>
-            <p className="font-pixel text-xs text-black/50">{healthyDaysCount} de {currentLogs.length} días</p>
           </div>
 
-          {/* Per-habit KPIs */}
-          <div className="space-y-3">
-            <p className="font-pixel text-xs text-black/60">POR HÁBITO</p>
+          {/* Per-habit grid */}
+          <p className="font-pixel text-xs text-black/60">POR HÁBITO</p>
+          <div className="grid grid-cols-2 gap-3">
             {allHabitKeys.map(key => {
               const positive = HABIT_POSITIVE[key] ?? true
               const label = HABIT_LABELS[key] || customHabits.find(h => h.id === key)?.name || key
@@ -202,28 +254,33 @@ export default function ReportsClient({ logs, customHabits, healthyDayThreshold,
               const prevPct = calcPct(prevLogs, key, positive)
               const { current: streakCurrent, longest: streakLongest } = calcStreak(currentLogs, key, positive)
               const goal = goals.find(g => g.habit_key === key)
+              const hitGoal = pct >= (goal?.target_pct ?? 0)
+              const pieColor = pct >= (goal?.target_pct ?? 50) ? '#0A80FE' : '#E12715'
 
               return (
                 <div key={key} className="card-pixel space-y-2">
-                  <div className="flex justify-between items-start gap-2">
-                    <p className="font-pixel text-xs text-black leading-relaxed flex-1">{label}</p>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="font-pixel text-sm text-black">{pct}%</span>
-                      <DeltaBadge current={pct} prev={prevPct} positive={positive} />
+                  <p className="font-pixel text-xs text-black leading-relaxed" style={{ fontSize: '7px', lineHeight: '1.6' }}>
+                    {label}
+                  </p>
+
+                  <div className="flex items-center justify-between gap-2">
+                    <PieChart pct={pct} size={64} color={pieColor} />
+                    <div className="text-right space-y-1">
+                      <div className="flex items-center justify-end gap-1">
+                        <span className="font-pixel text-base text-black">{pct}%</span>
+                        <DeltaBadge current={pct} prev={prevPct} positive={positive} />
+                      </div>
+                      {goal && (
+                        <p className="font-pixel text-black/50" style={{ fontSize: '7px' }}>
+                          meta {goal.target_pct}% {hitGoal ? '✓' : '✗'}
+                        </p>
+                      )}
                     </div>
                   </div>
-                  <div className="w-full bg-black/10 border-2 border-black h-2">
-                    <div
-                      className={`h-full transition-all ${pct >= (goal?.target_pct ?? 70) ? 'bg-rach-blue' : 'bg-rach-red'}`}
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
-                  {goal && (
-                    <p className="font-pixel text-xs text-black/50">Meta: {goal.target_pct}% {pct >= goal.target_pct ? '✓' : `(faltan ${goal.target_pct - pct}%)`}</p>
-                  )}
-                  <div className="flex gap-4">
-                    <span className="font-pixel text-xs text-black/50">Racha actual: {streakCurrent}</span>
-                    <span className="font-pixel text-xs text-black/50">Mejor: {streakLongest}</span>
+
+                  <div className="border-t border-black/10 pt-1 flex justify-between">
+                    <span className="font-pixel text-black/50" style={{ fontSize: '7px' }}>racha {streakCurrent}</span>
+                    <span className="font-pixel text-black/50" style={{ fontSize: '7px' }}>mejor {streakLongest}</span>
                   </div>
                 </div>
               )
