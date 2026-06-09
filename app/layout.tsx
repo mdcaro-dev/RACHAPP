@@ -4,6 +4,16 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'RACHAPP',
   description: 'Tu tracker de hábitos diarios',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'RACHAPP',
+  },
+  icons: {
+    apple: '/apple-touch-icon.png',
+    icon: '/icon-512.png',
+  },
 }
 
 export default function RootLayout({

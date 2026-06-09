@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body { background: #888; display: flex; gap: 40px; align-items: center; justify-content: center; min-height: 100vh; flex-wrap: wrap; }
+    .label { color: white; font-family: sans-serif; font-size: 12px; text-align: center; margin-top: 8px; }
+  </style>
+</head>
+<body>
+
+<!-- 512x512 -->
+<div>
+  <svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <clipPath id="round512">
+        <rect width="512" height="512" rx="112" ry="112"/>
+      </clipPath>
+    </defs>
+    <g clip-path="url(#round512)">
+      <rect width="512" height="512" fill="#F9D34C"/>
+      <rect x="8" y="8" width="496" height="496" rx="104" ry="104" fill="none" stroke="#000" stroke-width="16"/>
+      <rect x="32" y="32" width="16" height="16" fill="#000" opacity="0.15"/>
+      <rect x="64" y="32" width="16" height="16" fill="#000" opacity="0.15"/>
+      <rect x="32" y="64" width="16" height="16" fill="#000" opacity="0.15"/>
+      <rect x="432" y="432" width="16" height="16" fill="#000" opacity="0.15"/>
+      <rect x="464" y="432" width="16" height="16" fill="#000" opacity="0.15"/>
+      <rect x="432" y="464" width="16" height="16" fill="#000" opacity="0.15"/>
+      <rect x="464" y="464" width="16" height="16" fill="#000" opacity="0.15"/>
+      <text x="256" y="260" font-family="'Press Start 2P', monospace" font-size="88" fill="#000000" text-anchor="middle" dominant-baseline="middle" letter-spacing="-2">RACH</text>
+      <text x="256" y="360" font-family="'Press Start 2P', monospace" font-size="88" fill="#0A80FE" text-anchor="middle" dominant-baseline="middle" letter-spacing="-2">APP</text>
+    </g>
+  </svg>
+  <div class="label">512×512</div>
+</div>
+
+<!-- 180x180 (iPhone size) -->
+<div>
+  <svg width="180" height="180" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <clipPath id="round180">
+        <rect width="180" height="180" rx="40" ry="40"/>
+      </clipPath>
+    </defs>
+    <g clip-path="url(#round180)">
+      <rect width="180" height="180" fill="#F9D34C"/>
+      <!-- rounded black border as a stroked rect -->
+      <rect x="3" y="3" width="174" height="174" rx="37" ry="37" fill="none" stroke="#000" stroke-width="6"/>
+      <text x="90" y="88" font-family="'Press Start 2P', monospace" font-size="30" fill="#000000" text-anchor="middle" dominant-baseline="middle" letter-spacing="-1">RACH</text>
+      <text x="90" y="126" font-family="'Press Start 2P', monospace" font-size="30" fill="#0A80FE" text-anchor="middle" dominant-baseline="middle" letter-spacing="-1">APP</text>
+    </g>
+  </svg>
+  <div class="label">iPhone (180×180)</div>
+</div>
+
+<!-- 60x60 -->
+<div>
+  <svg width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <clipPath id="round60">
+        <rect width="60" height="60" rx="13" ry="13"/>
+      </clipPath>
+    </defs>
+    <g clip-path="url(#round60)">
+      <rect width="60" height="60" fill="#F9D34C"/>
+      <rect x="0" y="0" width="60" height="2" fill="#000"/>
+      <rect x="0" y="58" width="60" height="2" fill="#000"/>
+      <rect x="0" y="0" width="2" height="60" fill="#000"/>
+      <rect x="58" y="0" width="2" height="60" fill="#000"/>
+      <text x="30" y="28" font-family="'Press Start 2P', monospace" font-size="10" fill="#000000" text-anchor="middle" dominant-baseline="middle">RACH</text>
+      <text x="30" y="42" font-family="'Press Start 2P', monospace" font-size="10" fill="#0A80FE" text-anchor="middle" dominant-baseline="middle">APP</text>
+    </g>
+  </svg>
+  <div class="label">60×60</div>
+</div>
+
+</body>
+</html>
