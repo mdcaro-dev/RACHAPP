@@ -258,27 +258,25 @@ export default function ReportsClient({ logs, customHabits, healthyDayThreshold,
               const pieColor = pct >= (goal?.target_pct ?? 50) ? '#0A80FE' : '#E12715'
 
               return (
-                <div key={key} className="card-pixel space-y-2">
-                  <p className="font-pixel text-xs text-black leading-relaxed" style={{ fontSize: '7px', lineHeight: '1.6' }}>
+                <div key={key} className="card-pixel flex flex-col items-center gap-2 text-center">
+                  <p className="font-pixel text-black leading-relaxed w-full" style={{ fontSize: '7px', lineHeight: '1.6' }}>
                     {label}
                   </p>
 
-                  <div className="flex items-center justify-between gap-2">
-                    <PieChart pct={pct} size={64} color={pieColor} />
-                    <div className="text-right space-y-1">
-                      <div className="flex items-center justify-end gap-1">
-                        <span className="font-pixel text-base text-black">{pct}%</span>
-                        <DeltaBadge current={pct} prev={prevPct} positive={positive} />
-                      </div>
-                      {goal && (
-                        <p className="font-pixel text-black/50" style={{ fontSize: '7px' }}>
-                          meta {goal.target_pct}% {hitGoal ? '✓' : '✗'}
-                        </p>
-                      )}
-                    </div>
+                  <PieChart pct={pct} size={64} color={pieColor} />
+
+                  <div className="flex items-center gap-1 justify-center">
+                    <span className="font-pixel text-sm text-black">{pct}%</span>
+                    <DeltaBadge current={pct} prev={prevPct} positive={positive} />
                   </div>
 
-                  <div className="border-t border-black/10 pt-1 flex justify-between">
+                  {goal && (
+                    <p className="font-pixel text-black/50" style={{ fontSize: '7px' }}>
+                      meta {goal.target_pct}% {hitGoal ? '✓' : '✗'}
+                    </p>
+                  )}
+
+                  <div className="border-t border-black/10 pt-1 w-full flex justify-between">
                     <span className="font-pixel text-black/50" style={{ fontSize: '7px' }}>racha {streakCurrent}</span>
                     <span className="font-pixel text-black/50" style={{ fontSize: '7px' }}>mejor {streakLongest}</span>
                   </div>
