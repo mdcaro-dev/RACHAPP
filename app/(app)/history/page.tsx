@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import Link from 'next/link'
 import { HABIT_POSITIVE } from '@/types'
+import GoToDayPicker from './GoToDayPicker'
 
 function calcPctForLog(log: any, customHabits: any[]): number {
   const keys = [...Object.keys(HABIT_POSITIVE), ...customHabits.map((h: any) => h.id)]
@@ -18,7 +19,6 @@ function calcPctForLog(log: any, customHabits: any[]): number {
     else if (key === 'drank_alcohol') val = log.drank_alcohol
     else if (key === 'physical_activity') val = log.physical_activity !== null && log.physical_activity !== 'nada'
     else val = log.custom_habits?.[key] ?? null
-
     if (val === null) continue
     if (positive ? val === true : val === false) met++
   }
@@ -30,26 +30,23 @@ export default async function HistoryPage() {
   const { data: { session } } = await supabase.auth.getSession()
   const userId = session!.user.id
 
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Argentina/Buenos_Aires' })
+
   const [logsResult, customResult] = await Promise.all([
-    supabase
-      .from('daily_logs')
-      .select('*')
-      .eq('user_id', userId)
-      .order('log_date', { ascending: false }),
-    supabase
-      .from('custom_habits')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('active', true)
-      .order('sort_order'),
+    supabase.from('daily_logs').select('*').eq('user_id', userId).order('log_date', { ascending: false }),
+    supabase.from('custom_habits').select('*').eq('user_id', userId).eq('active', true).order('sort_order'),
   ])
 
   const logs = logsResult.data || []
   const customHabits = customResult.data || []
+  const loggedDates = logs.map(l => l.log_date)
 
   return (
     <div className="space-y-4">
-      <h2 className="font-pixel text-base text-black">HISTORIAL</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="font-pixel text-base text-black">HISTORIAL</h2>
+        <GoToDayPicker today={today} loggedDates={loggedDates} />
+      </div>
 
       {logs.length === 0 ? (
         <div className="card-pixel text-center py-8">
